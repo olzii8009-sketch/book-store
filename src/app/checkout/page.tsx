@@ -2,344 +2,214 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { books } from "../book";
+import { supabase } from "../lib/supabase";
+import { useBooks } from "../BookContext";
 import { useCart } from "../CartContext";
 
-export default function CheckoutPage() {
-  const { items, clear } = useCart();
+const inputStyle = {
+  width: "100%",
+  padding: "10px 12px",
+  fontSize: "16px",
+  border: "1px solid #ccc",
+  borderRadius: "8px",
+  marginTop: "6px",
+  marginBottom: "16px",
+  background: "white",
+};
 
+export default function CheckoutPage() {
+  const { books, loading } = useBooks();
+  const { items, clear } = useCart();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const [note, setNote] = useState("");
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [done, setDone] = useState(false);
 
-  // Сагсан дахь номнуудыг олох
-  const orderItems = Object.entries(items)
-    .map(([id, quantity]) => {
-      const book = books.find((b) => b.id === Number(id));
+  const cartBooks = books.filter((b) => items[b.id]);
+  const total = cartBooks.reduce((sum, b) => sum + b.price * items[b.id], 0);
 
-      if (!book) return null;
+  const submit = async () => {
+    if (!name.trim() || !phone.trim() || !address.trim()) {
+      setError("Нэр, утас, хаягаа бүрэн бөглөнө үү.");
+      return;
+    }
+    if (!/^\d{8}$/.test(phone.replace(/\s/g, ""))) {
+      setError("Утасны дугаар 8 оронтой байх ёстой.");
+      return;
+    }
+    setError("");
+    setSubmitting(true);
 
-      return {
-        book,
-        quantity,
-      };
-    })
-    .filter(
-      (
-        item
-      ): item is {
-        book: (typeof books)[number];
-        quantity: number;
-      } => item !== null
-    );
+    const { error: dbError } = await supabase.from("orders").insert({
+      name: name.trim(),
+      phone: phone.replace(/\s/g, ""),
+      address: address.trim(),
+      note: note.trim() || null,
+      items: cartBooks.map((b) => ({
+        id: b.id,
+        title: b.title,
+        price: b.price,
+        quantity: items[b.id],
+      })),
+      total,
+    });
 
-  // Нийт үнэ
-  const total = orderItems.reduce(
-    (sum, item) => sum + item.book.price * item.quantity,
-    0
-  );
+    setSubmitting(false);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (orderItems.length === 0) {
-      alert("Таны сагс хоосон байна.");
+    if (dbError) {
+      setError("Захиалга илгээхэд алдаа гарлаа: " + dbError.message);
       return;
     }
 
-    setSubmitted(true);
     clear();
+    setDone(true);
   };
 
-  // Захиалга амжилттай болсон хэсэг
-  if (submitted) {
+  if (done) {
     return (
-      <main
-        style={{
-          maxWidth: "700px",
-          margin: "60px auto",
-          padding: "24px",
-          fontFamily: "sans-serif",
-        }}
-      >
-        <div
-          style={{
-            textAlign: "center",
-            padding: "40px 20px",
-            border: "1px solid #ddd",
-            borderRadius: "12px",
-          }}
+      <main style={{ padding: "40px", fontFamily: "sans-serif", maxWidth: "600px" }}>
+        <h1>✅ Захиалга амжилттай!</h1>
+        <p style={{ marginTop: "16px" }}>Баярлалаа, {name}!</p>
+        <p style={{ marginTop: "8px" }}>
+          Бид тантай {phone} дугаараар холбогдох болно.
+        </p>
+        <Link
+          href="/"
+          style={{ display: "inline-block", marginTop: "24px", color: "#0070f3" }}
         >
-          <div style={{ fontSize: "50px" }}>✅</div>
-
-          <h1 style={{ marginTop: "16px" }}>
-            Захиалга амжилттай!
-          </h1>
-
-          <p style={{ color: "#666", marginTop: "12px" }}>
-            Таны захиалга амжилттай бүртгэгдлээ.
-          </p>
-
-          <div
-            style={{
-              textAlign: "left",
-              background: "#f7f7f7",
-              padding: "20px",
-              borderRadius: "8px",
-              marginTop: "24px",
-            }}
-          >
-            <p>
-              <strong>Нэр:</strong> {name}
-            </p>
-
-            <p>
-              <strong>Утас:</strong> {phone}
-            </p>
-
-            <p>
-              <strong>Хаяг:</strong> {address}
-            </p>
-          </div>
-
-          <Link
-            href="/"
-            style={{
-              display: "inline-block",
-              marginTop: "24px",
-              padding: "10px 20px",
-              background: "#0070f3",
-              color: "white",
-              borderRadius: "8px",
-              textDecoration: "none",
-            }}
-          >
-            Номын дэлгүүр рүү буцах
-          </Link>
-        </div>
+          ← Дэлгүүр рүү буцах
+        </Link>
       </main>
     );
   }
 
-  // Сагс хоосон
-  if (orderItems.length === 0) {
+  if (loading) {
     return (
-      <main
-        style={{
-          maxWidth: "700px",
-          margin: "60px auto",
-          padding: "24px",
-          fontFamily: "sans-serif",
-          textAlign: "center",
-        }}
-      >
-        <h1>Захиалга өгөх</h1>
+      <main style={{ padding: "40px", fontFamily: "sans-serif" }}>
+        <p>Ачаалж байна...</p>
+      </main>
+    );
+  }
 
-        <p style={{ marginTop: "20px", color: "#666" }}>
-          Таны сагс хоосон байна.
-        </p>
-
+  if (cartBooks.length === 0) {
+    return (
+      <main style={{ padding: "40px", fontFamily: "sans-serif" }}>
+        <h1>Захиалга</h1>
+        <p style={{ marginTop: "16px" }}>Сагс хоосон байна.</p>
         <Link
           href="/"
-          style={{
-            display: "inline-block",
-            marginTop: "20px",
-            padding: "10px 20px",
-            background: "#0070f3",
-            color: "white",
-            borderRadius: "8px",
-            textDecoration: "none",
-          }}
+          style={{ display: "inline-block", marginTop: "16px", color: "#0070f3" }}
         >
-          Ном сонгох
+          ← Дэлгүүр рүү буцах
         </Link>
       </main>
     );
   }
 
   return (
-    <main
-      style={{
-        maxWidth: "1000px",
-        margin: "40px auto",
-        padding: "24px",
-        fontFamily: "sans-serif",
-      }}
-    >
-      <h1>Захиалга өгөх</h1>
+    <main style={{ padding: "40px", fontFamily: "sans-serif", maxWidth: "900px" }}>
+      <Link href="/cart" style={{ color: "#0070f3" }}>
+        ← Сагс руу буцах
+      </Link>
+      <h1 style={{ marginTop: "16px" }}>Захиалга өгөх</h1>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "40px",
-          marginTop: "30px",
-        }}
-      >
-        {/* ЗАХИАЛАГЧИЙН МЭДЭЭЛЭЛ */}
-        <form onSubmit={handleSubmit}>
-          <h2>Хүргэлтийн мэдээлэл</h2>
-
-          <label
-            style={{
-              display: "block",
-              marginTop: "20px",
-              marginBottom: "6px",
-              fontWeight: "bold",
-            }}
-          >
-            Нэр
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "40px", marginTop: "24px" }}>
+        <div style={{ flex: 1, minWidth: "280px" }}>
+          <label>
+            Нэр *
+            <input
+              style={inputStyle}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Таны нэр"
+            />
           </label>
 
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Нэрээ оруулна уу"
-            required
-            style={{
-              width: "100%",
-              boxSizing: "border-box",
-              padding: "12px",
-              fontSize: "16px",
-              border: "1px solid #ccc",
-              borderRadius: "8px",
-            }}
-          />
-
-          <label
-            style={{
-              display: "block",
-              marginTop: "18px",
-              marginBottom: "6px",
-              fontWeight: "bold",
-            }}
-          >
-            Утас
+          <label>
+            Утасны дугаар *
+            <input
+              style={inputStyle}
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="99112233"
+              inputMode="numeric"
+            />
           </label>
 
-          <input
-            type="tel"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="99112233"
-            required
-            pattern="[0-9]{8}"
-            title="8 оронтой утасны дугаар оруулна уу"
-            style={{
-              width: "100%",
-              boxSizing: "border-box",
-              padding: "12px",
-              fontSize: "16px",
-              border: "1px solid #ccc",
-              borderRadius: "8px",
-            }}
-          />
-
-          <label
-            style={{
-              display: "block",
-              marginTop: "18px",
-              marginBottom: "6px",
-              fontWeight: "bold",
-            }}
-          >
-            Хаяг
+          <label>
+            Хүргэлтийн хаяг *
+            <textarea
+              style={{ ...inputStyle, minHeight: "80px" }}
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              placeholder="Дүүрэг, хороо, байр, тоот"
+            />
           </label>
 
-          <textarea
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            placeholder="Хүргэлт хийх дэлгэрэнгүй хаяг"
-            required
-            rows={5}
-            style={{
-              width: "100%",
-              boxSizing: "border-box",
-              padding: "12px",
-              fontSize: "16px",
-              border: "1px solid #ccc",
-              borderRadius: "8px",
-              resize: "vertical",
-            }}
-          />
+          <label>
+            Нэмэлт тайлбар
+            <textarea
+              style={{ ...inputStyle, minHeight: "60px" }}
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder="Хэрэв байвал"
+            />
+          </label>
+
+          {error && <p style={{ color: "#d32f2f", marginBottom: "12px" }}>{error}</p>}
 
           <button
-            type="submit"
+            onClick={submit}
+            disabled={submitting}
             style={{
-              width: "100%",
-              marginTop: "24px",
-              padding: "14px",
-              background: "#0070f3",
+              padding: "12px 24px",
+              fontSize: "16px",
+              background: submitting ? "#7a8aa0" : "#1e3a5f",
               color: "white",
               border: "none",
               borderRadius: "8px",
-              fontSize: "16px",
-              fontWeight: "bold",
-              cursor: "pointer",
+              cursor: submitting ? "default" : "pointer",
             }}
           >
-            Захиалга өгөх
+            {submitting ? "Илгээж байна..." : "Захиалах"}
           </button>
-        </form>
+        </div>
 
-        {/* ЗАХИАЛГЫН ТОЙМ */}
-        <div>
-          <h2>Захиалгын тойм</h2>
-
-          <div
-            style={{
-              marginTop: "20px",
-              border: "1px solid #ddd",
-              borderRadius: "10px",
-              padding: "20px",
-            }}
-          >
-            {orderItems.map(({ book, quantity }) => (
-              <div
-                key={book.id}
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  gap: "20px",
-                  padding: "14px 0",
-                  borderBottom: "1px solid #eee",
-                }}
-              >
-                <div>
-                  <strong>{book.title}</strong>
-
-                  <div
-                    style={{
-                      marginTop: "5px",
-                      color: "#777",
-                      fontSize: "14px",
-                    }}
-                  >
-                    {quantity} ширхэг ×{" "}
-                    {book.price.toLocaleString()}₮
-                  </div>
-                </div>
-
-                <strong style={{ whiteSpace: "nowrap" }}>
-                  {(book.price * quantity).toLocaleString()}₮
-                </strong>
-              </div>
-            ))}
-
+        <div
+          style={{
+            flex: 1,
+            minWidth: "260px",
+            background: "white",
+            border: "1px solid #ddd",
+            borderRadius: "8px",
+            padding: "20px",
+            alignSelf: "flex-start",
+          }}
+        >
+          <h3>Таны захиалга</h3>
+          {cartBooks.map((b) => (
             <div
+              key={b.id}
               style={{
                 display: "flex",
                 justifyContent: "space-between",
-                marginTop: "20px",
-                fontSize: "20px",
+                gap: "12px",
+                marginTop: "12px",
               }}
             >
-              <strong>Нийт:</strong>
-
-              <strong>{total.toLocaleString()}₮</strong>
+              <span>
+                {b.title} × {items[b.id]}
+              </span>
+              <span>{(b.price * items[b.id]).toLocaleString()}₮</span>
             </div>
+          ))}
+          <hr style={{ margin: "16px 0", border: "none", borderTop: "1px solid #ddd" }} />
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <b>Нийт:</b>
+            <b>{total.toLocaleString()}₮</b>
           </div>
         </div>
       </div>

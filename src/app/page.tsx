@@ -2,15 +2,21 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { books } from "./book";
+import { useBooks } from "./BookContext";
 import { useCart } from "./CartContext";
 
-const categories = ["Бүгд", ...Array.from(new Set(books.map((b) => b.category)))];
-
 export default function Home() {
+  const { books, loading, error } = useBooks();
   const { add } = useCart();
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("Бүгд");
+
+  const categories = [
+    "Бүгд",
+    ...Array.from(
+      new Set(books.map((b) => b.category).filter((c): c is string => !!c))
+    ),
+  ];
 
   const query = search.trim().toLowerCase();
   const filtered = books.filter((b) => {
@@ -23,15 +29,7 @@ export default function Home() {
 
   return (
     <main style={{ padding: "40px", fontFamily: "sans-serif" }}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <h1 style={{ margin: 0 }}>Номын жагсаалт</h1>
-      </div>
+      <h1 style={{ margin: 0 }}>Номын жагсаалт</h1>
 
       <div style={{ marginTop: "24px" }}>
         <input
@@ -69,7 +67,13 @@ export default function Home() {
         ))}
       </div>
 
-      {filtered.length === 0 ? (
+      {loading ? (
+        <p style={{ marginTop: "32px" }}>Ачаалж байна...</p>
+      ) : error ? (
+        <p style={{ marginTop: "32px", color: "#d32f2f" }}>
+          Алдаа гарлаа: {error}
+        </p>
+      ) : filtered.length === 0 ? (
         <p style={{ marginTop: "32px" }}>Хайлтад тохирох ном олдсонгүй.</p>
       ) : (
         <div
@@ -102,7 +106,7 @@ export default function Home() {
                   }}
                 >
                   <img
-                    src={book.cover}
+                    src={book.cover || undefined}
                     alt={book.title}
                     style={{ width: "100%", height: "100%", objectFit: "cover" }}
                     onError={(e) => {

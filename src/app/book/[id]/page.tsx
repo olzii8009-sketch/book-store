@@ -2,14 +2,23 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { books } from "../../book";
+import { useBooks } from "../../BookContext";
 import { useCart } from "../../CartContext";
 
 export default function BookPage() {
   const params = useParams<{ id: string }>();
+  const { books, loading } = useBooks();
   const { items, add } = useCart();
 
   const book = books.find((b) => b.id === Number(params.id));
+
+  if (loading) {
+    return (
+      <main style={{ padding: "40px", fontFamily: "sans-serif" }}>
+        <p>Ачаалж байна...</p>
+      </main>
+    );
+  }
 
   if (!book) {
     return (
@@ -47,7 +56,7 @@ export default function BookPage() {
           }}
         >
           <img
-            src={book.cover}
+            src={book.cover || undefined}
             alt={book.title}
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
             onError={(e) => {
