@@ -13,7 +13,7 @@ export default function CartPage() {
 
   return (
     <main style={{ padding: "40px", fontFamily: "sans-serif", maxWidth: "800px" }}>
-      <Link href="/" style={{ color: "#0070f3" }}>
+      <Link href="/" style={{ color: "#1f4d3a" }}>
         ← Дэлгүүр рүү буцах
       </Link>
       <h1 style={{ marginTop: "16px" }}>🛒 Миний сагс</h1>
@@ -109,7 +109,7 @@ export default function CartPage() {
               style={{
                 display: "inline-block",
                 padding: "12px 24px",
-                background: "#1e3a5f",
+                background: "#1f4d3a",
                 color: "white",
                 borderRadius: "8px",
                 textDecoration: "none",

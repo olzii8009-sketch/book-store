@@ -138,7 +138,7 @@ export default function AdminPage() {
             style={{
               padding: "12px 24px",
               fontSize: "16px",
-              background: "#1e3a5f",
+              background: "#1f4d3a",
               color: "white",
               border: "none",
               borderRadius: "8px",
@@ -168,7 +168,7 @@ export default function AdminPage() {
         <div>
             <Link
   href="/admin/books"
-  style={{ marginRight: "16px", color: "#0070f3" }}
+  style={{ marginRight: "16px", color: "#1f4d3a" }}
 >
   📚 Ном удирдах
 </Link>

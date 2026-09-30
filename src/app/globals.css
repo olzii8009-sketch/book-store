@@ -1,3 +1,13 @@
+:root {
+  --primary: #1f4d3a;
+  --primary-dark: #163a2b;
+  --accent: #e9a23b;
+  --bg: #faf7f2;
+  --text: #2b2b2b;
+  --muted: #6b6b6b;
+  --border: #e3ddd2;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -12,8 +22,8 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #f7f7f8;
-  color: #222;
+  background: var(--bg);
+  color: var(--text);
   color-scheme: light;
   font-family: "Segoe UI", Arial, sans-serif;
 }
@@ -31,12 +41,15 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 14px 40px;
-  background: #1e3a5f;
+  background: var(--primary);
   color: white;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   color: white;
   text-decoration: none;
   font-size: 20px;
@@ -59,20 +72,51 @@ body {
 }
 
 .badge {
-  background: #ff5a5f;
-  color: white;
+  background: var(--accent);
+  color: #3a2a05;
   border-radius: 12px;
   padding: 2px 8px;
   font-size: 13px;
   font-weight: bold;
 }
 
+/* Баннер */
+.banner {
+  background: linear-gradient(135deg, var(--primary) 0%, #2f6b52 100%);
+  color: white;
+  border-radius: 16px;
+  padding: 48px 32px;
+  margin-bottom: 32px;
+}
+
+.banner h2 {
+  margin: 0;
+  font-size: 32px;
+}
+
+.banner p {
+  margin: 12px 0 0;
+  font-size: 18px;
+  opacity: 0.9;
+}
+
+.banner-tag {
+  display: inline-block;
+  background: var(--accent);
+  color: #3a2a05;
+  font-weight: bold;
+  font-size: 13px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+}
+
 /* Доод хэсэг */
 .footer {
   text-align: center;
   padding: 24px;
-  background: #1e3a5f;
-  color: #cbd5e1;
+  background: var(--primary);
+  color: #d5e3dc;
   margin-top: 40px;
 }
 
@@ -83,6 +127,7 @@ body {
 /* Номын карт */
 .card {
   background: white;
+  border: 1px solid var(--border) !important;
   transition: transform 0.15s, box-shadow 0.15s;
 }
 
@@ -91,8 +136,39 @@ body {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 }
 
+/* Товчнууд */
 button {
   font-family: inherit;
+}
+
+.btn {
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn:hover {
+  background: var(--primary-dark);
+}
+
+.chip {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--primary);
+  background: transparent;
+  color: var(--primary);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.chip.active {
+  background: var(--primary);
+  color: white;
 }
 
 /* Гар утас */
@@ -103,6 +179,14 @@ button {
 
   .logo {
     font-size: 16px;
+  }
+
+  .banner {
+    padding: 32px 20px;
+  }
+
+  .banner h2 {
+    font-size: 24px;
   }
 
   main {

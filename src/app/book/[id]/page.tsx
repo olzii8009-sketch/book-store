@@ -23,7 +23,7 @@ export default function BookPage() {
   if (!book) {
     return (
       <main style={{ padding: "40px", fontFamily: "sans-serif" }}>
-        <Link href="/" style={{ color: "#0070f3" }}>
+        <Link href="/" style={{ color: "#1f4d3a" }}>
           ← Дэлгүүр рүү буцах
         </Link>
         <h1 style={{ marginTop: "16px" }}>Ном олдсонгүй</h1>
@@ -33,7 +33,7 @@ export default function BookPage() {
 
   return (
     <main style={{ padding: "40px", fontFamily: "sans-serif", maxWidth: "900px" }}>
-      <Link href="/" style={{ color: "#0070f3" }}>
+      <Link href="/" style={{ color: "#1f4d3a" }}>
         ← Дэлгүүр рүү буцах
       </Link>
 
@@ -81,7 +81,7 @@ export default function BookPage() {
           {items[book.id] > 0 && (
             <p style={{ marginTop: "12px" }}>
               Сагсанд {items[book.id]} ширхэг байна.{" "}
-              <Link href="/cart" style={{ color: "#0070f3" }}>
+              <Link href="/cart" style={{ color: "#1f4d3a" }}>
                 Сагс үзэх →
               </Link>
             </p>

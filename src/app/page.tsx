@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Banner from "./Banner";
 import { useBooks } from "./BookContext";
 import { useCart } from "./CartContext";
 
@@ -29,6 +30,8 @@ export default function Home() {
 
   return (
     <main style={{ padding: "40px", fontFamily: "sans-serif" }}>
+      <Banner />
+
       <h1 style={{ margin: 0 }}>Номын жагсаалт</h1>
 
       <div style={{ marginTop: "24px" }}>
@@ -53,14 +56,7 @@ export default function Home() {
           <button
             key={c}
             onClick={() => setCategory(c)}
-            style={{
-              padding: "6px 14px",
-              borderRadius: "20px",
-              border: "1px solid #999",
-              cursor: "pointer",
-              background: category === c ? "#0070f3" : "transparent",
-              color: category === c ? "white" : "inherit",
-            }}
+            className={category === c ? "chip active" : "chip"}
           >
             {c}
           </button>
@@ -89,8 +85,7 @@ export default function Home() {
               key={book.id}
               className="card"
               style={{
-                border: "1px solid #ccc",
-                borderRadius: "8px",
+                borderRadius: "12px",
                 padding: "16px",
               }}
             >
@@ -99,8 +94,8 @@ export default function Home() {
                   style={{
                     width: "100%",
                     aspectRatio: "2 / 3",
-                    background: "#e5e5e5",
-                    borderRadius: "6px",
+                    background: "#ece7dd",
+                    borderRadius: "8px",
                     overflow: "hidden",
                     marginBottom: "12px",
                   }}
@@ -115,7 +110,7 @@ export default function Home() {
                   />
                 </div>
               </Link>
-              <h3>
+              <h3 style={{ margin: "0 0 4px" }}>
                 <Link
                   href={`/book/${book.id}`}
                   style={{ color: "inherit", textDecoration: "none" }}
@@ -123,15 +118,14 @@ export default function Home() {
                   {book.title}
                 </Link>
               </h3>
-              <p>{book.author}</p>
-              <p style={{ fontSize: "13px", color: "#888" }}>{book.category}</p>
-              <p>
+              <p style={{ margin: "0 0 4px" }}>{book.author}</p>
+              <p style={{ margin: "0 0 8px", fontSize: "13px", color: "var(--muted)" }}>
+                {book.category}
+              </p>
+              <p style={{ margin: "0 0 12px", color: "var(--primary)", fontSize: "18px" }}>
                 <b>{book.price.toLocaleString()}₮</b>
               </p>
-              <button
-                onClick={() => add(book.id)}
-                style={{ padding: "8px 12px", cursor: "pointer" }}
-              >
+              <button onClick={() => add(book.id)} className="btn">
                 Сагсанд нэмэх
               </button>
             </div>

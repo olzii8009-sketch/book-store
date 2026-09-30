@@ -178,7 +178,7 @@ export default function AdminBooksPage() {
         <p>Эхлээд нэвтэрнэ үү.</p>
         <Link
           href="/admin"
-          style={{ display: "inline-block", marginTop: "12px", color: "#0070f3" }}
+          style={{ display: "inline-block", marginTop: "12px", color: "#1f4d3a" }}
         >
           Нэвтрэх хуудас руу →
         </Link>
@@ -188,7 +188,7 @@ export default function AdminBooksPage() {
 
   return (
     <main style={{ padding: "40px", fontFamily: "sans-serif", maxWidth: "1000px" }}>
-      <Link href="/admin" style={{ color: "#0070f3" }}>
+      <Link href="/admin" style={{ color: "#1f4d3a" }}>
         ← Захиалгууд руу буцах
       </Link>
       <h1 style={{ marginTop: "16px" }}>Номын удирдлага</h1>
@@ -277,7 +277,7 @@ export default function AdminBooksPage() {
             style={{
               padding: "12px 24px",
               fontSize: "16px",
-              background: saving ? "#7a8aa0" : "#1e3a5f",
+              background: saving ? "#7a8aa0" : "#1f4d3a",
               color: "white",
               border: "none",
               borderRadius: "8px",

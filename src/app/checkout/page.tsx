@@ -78,7 +78,7 @@ export default function CheckoutPage() {
         </p>
         <Link
           href="/"
-          style={{ display: "inline-block", marginTop: "24px", color: "#0070f3" }}
+          style={{ display: "inline-block", marginTop: "24px", color: "#1f4d3a" }}
         >
           ← Дэлгүүр рүү буцах
         </Link>
@@ -101,7 +101,7 @@ export default function CheckoutPage() {
         <p style={{ marginTop: "16px" }}>Сагс хоосон байна.</p>
         <Link
           href="/"
-          style={{ display: "inline-block", marginTop: "16px", color: "#0070f3" }}
+          style={{ display: "inline-block", marginTop: "16px", color: "#1f4d3a" }}
         >
           ← Дэлгүүр рүү буцах
         </Link>
@@ -111,7 +111,7 @@ export default function CheckoutPage() {
 
   return (
     <main style={{ padding: "40px", fontFamily: "sans-serif", maxWidth: "900px" }}>
-      <Link href="/cart" style={{ color: "#0070f3" }}>
+      <Link href="/cart" style={{ color: "#1f4d3a" }}>
         ← Сагс руу буцах
       </Link>
       <h1 style={{ marginTop: "16px" }}>Захиалга өгөх</h1>
@@ -167,7 +167,7 @@ export default function CheckoutPage() {
             style={{
               padding: "12px 24px",
               fontSize: "16px",
-              background: submitting ? "#7a8aa0" : "#1e3a5f",
+              background: submitting ? "#7a8aa0" : "#1f4d3a",
               color: "white",
               border: "none",
               borderRadius: "8px",
