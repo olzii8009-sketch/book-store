@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "../../lib/supabase";
+import Link from "next/link";
 
 type OrderItem = { id: number; title: string; price: number; quantity: number };
 
@@ -165,6 +166,12 @@ export default function AdminPage() {
       >
         <h1 style={{ margin: 0 }}>Захиалгууд ({orders.length})</h1>
         <div>
+            <Link
+  href="/admin/books"
+  style={{ marginRight: "16px", color: "#0070f3" }}
+>
+  📚 Ном удирдах
+</Link>
           <span style={{ marginRight: "12px", color: "#666" }}>
             {session.user.email}
           </span>
